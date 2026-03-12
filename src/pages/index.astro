@@ -71,7 +71,7 @@ import Settings from '../components/Settings.astro';
     if (!runningEntry || !startTime) return;
     const elapsed = Date.now() - startTime;
     elements.timerDisplay.textContent = formatDuration(elapsed);
-    elements.runningTimerDisplay.textContent = `Tracking: ${formatDuration(elapsed)}`;
+    elements.runningTimerDisplay.textContent = `Tracking ${runningEntry.project}: ${formatDuration(elapsed)}`;
   }
 
   function startTimer() {
