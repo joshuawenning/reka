@@ -1,5 +1,5 @@
 # Reka
-> Refreshingly simple time management
+> Refreshingly simple time tracking
 
 ## Install
 Install dependencies with: `npm install`
