@@ -251,13 +251,10 @@ import Settings from '../components/Settings.astro';
 
     row.innerHTML = `
       <div class="entry-edit-form">
-        <div class="edit-field">
+        <div class="edit-field edit-field-full">
           <span class="edit-field-label">Project</span>
           <input type="text" class="edit-input edit-project" value="${escapeHtml(entry.project)}" placeholder="Project" />
-        </div>
-        <div class="edit-field">
-          <span class="edit-field-label">Description</span>
-          <input type="text" class="edit-input edit-description" value="${escapeHtml(entry.description || '')}" placeholder="Description" />
+          <input type="text" class="edit-input edit-description" value="${escapeHtml(entry.description || '')}" placeholder="Description" style="margin-top: 6px;" />
         </div>
         <div class="edit-field">
           <span class="edit-field-label">Date</span>
@@ -270,7 +267,6 @@ import Settings from '../components/Settings.astro';
             <input type="time" class="edit-input edit-end" value="${endTimeStr}" />
           </div>
         </div>
-        <div></div>
         <div class="edit-actions">
           <button class="edit-btn cancel" data-id="${id}">Cancel</button>
           <button class="edit-btn save" data-id="${id}">Save</button>
