@@ -245,29 +245,53 @@
 
   :global(.entry-edit-form) {
     display: grid;
-    grid-template-columns: 1fr 120px 100px 80px;
-    gap: 16px;
-    padding: 12px 16px;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 16px;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    align-items: center;
+    align-items: start;
+  }
+
+  :global(.edit-field) {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  :global(.edit-field-label) {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
   }
 
   :global(.edit-input) {
-    padding: 6px 10px;
+    padding: 8px 10px;
     font-size: 13px;
+    width: 100%;
+  }
+
+  :global(.edit-input-row) {
+    display: flex;
+    gap: 8px;
+  }
+
+  :global(.edit-input-row .edit-input) {
+    flex: 1;
   }
 
   :global(.edit-actions) {
     display: flex;
     justify-content: flex-end;
     gap: 8px;
+    align-items: flex-end;
   }
 
   :global(.edit-btn) {
-    padding: 4px 10px;
-    font-size: 12px;
-    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 6px;
     font-weight: 500;
   }
 

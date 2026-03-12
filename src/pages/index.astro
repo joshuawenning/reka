@@ -251,17 +251,26 @@ import Settings from '../components/Settings.astro';
 
     row.innerHTML = `
       <div class="entry-edit-form">
-        <div>
+        <div class="edit-field">
+          <span class="edit-field-label">Project</span>
           <input type="text" class="edit-input edit-project" value="${escapeHtml(entry.project)}" placeholder="Project" />
-          <input type="text" class="edit-input edit-description" value="${escapeHtml(entry.description || '')}" placeholder="Description" style="margin-top: 6px;" />
         </div>
-        <div>
+        <div class="edit-field">
+          <span class="edit-field-label">Description</span>
+          <input type="text" class="edit-input edit-description" value="${escapeHtml(entry.description || '')}" placeholder="Description" />
+        </div>
+        <div class="edit-field">
+          <span class="edit-field-label">Date</span>
           <input type="date" class="edit-input edit-date" value="${dateStr}" />
-          <input type="time" class="edit-input edit-start" value="${startTimeStr}" style="margin-top: 6px;" />
         </div>
-        <div>
-          <input type="time" class="edit-input edit-end" value="${endTimeStr}" />
+        <div class="edit-field">
+          <span class="edit-field-label">Time</span>
+          <div class="edit-input-row">
+            <input type="time" class="edit-input edit-start" value="${startTimeStr}" />
+            <input type="time" class="edit-input edit-end" value="${endTimeStr}" />
+          </div>
         </div>
+        <div></div>
         <div class="edit-actions">
           <button class="edit-btn cancel" data-id="${id}">Cancel</button>
           <button class="edit-btn save" data-id="${id}">Save</button>
