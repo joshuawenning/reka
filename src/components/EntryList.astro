@@ -1,0 +1,259 @@
+---
+---
+
+<div id="entries-section" class="entries-section">
+  <div class="entries-header">
+    <h2>Time Entries</h2>
+    <button id="manual-entry-toggle" class="text-btn">+ Add manual entry</button>
+  </div>
+  
+  <div id="manual-entry-form" class="manual-entry-form hidden">
+    <div class="form-row">
+      <input type="text" id="manual-project" placeholder="Project name" required />
+    </div>
+    <div class="form-row">
+      <input type="text" id="manual-description" placeholder="Description (optional)" />
+    </div>
+    <div class="form-row form-row-split">
+      <input type="date" id="manual-date" required />
+      <input type="time" id="manual-start" required />
+      <input type="time" id="manual-end" required />
+    </div>
+    <div class="form-actions">
+      <button id="manual-cancel" class="btn-secondary">Cancel</button>
+      <button id="manual-submit" class="btn-primary">Add Entry</button>
+    </div>
+  </div>
+  
+  <div id="entries-list" class="entries-list"></div>
+  
+  <div id="empty-state" class="empty-state hidden">
+    <p>No time entries yet.</p>
+    <p class="sub">Start tracking to see your work here.</p>
+  </div>
+</div>
+
+<style>
+  .entries-section {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 0 24px 48px;
+  }
+
+  .entries-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .entries-header h2 {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .text-btn {
+    color: var(--accent);
+    font-weight: 500;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.15s ease-out;
+  }
+
+  .text-btn:hover {
+    background: var(--surface);
+  }
+
+  .manual-entry-form {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .manual-entry-form.hidden {
+    display: none;
+  }
+
+  .form-row input {
+    width: 100%;
+  }
+
+  .form-row-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+
+  .btn-secondary {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: all 0.15s ease-out;
+  }
+
+  .btn-secondary:hover {
+    background: var(--bg);
+    color: var(--text-primary);
+  }
+
+  .btn-primary {
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-weight: 500;
+    background: var(--accent);
+    color: white;
+    transition: all 0.15s ease-out;
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-hover);
+  }
+
+  .entries-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .project-group {
+    margin-bottom: 16px;
+  }
+
+  .project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+    cursor: pointer;
+  }
+
+  .project-name {
+    font-weight: 600;
+    font-size: 16px;
+  }
+
+  .project-total {
+    font-family: var(--font-mono);
+    font-size: 14px;
+    color: var(--text-secondary);
+  }
+
+  .entry-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    transition: box-shadow 0.15s ease-out;
+  }
+
+  .entry-card:hover {
+    box-shadow: var(--shadow);
+  }
+
+  .entry-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .entry-project {
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .entry-description {
+    color: var(--text-secondary);
+    font-size: 14px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 8px;
+  }
+
+  .entry-meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .entry-duration {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    font-size: 16px;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+
+  .entry-actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.15s ease-out;
+  }
+
+  .entry-card:hover .entry-actions {
+    opacity: 1;
+  }
+
+  .entry-action-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    color: var(--text-muted);
+    transition: all 0.15s ease-out;
+  }
+
+  .entry-action-btn:hover {
+    background: var(--bg);
+    color: var(--text-primary);
+  }
+
+  .entry-action-btn.delete:hover {
+    color: var(--accent);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-secondary);
+  }
+
+  .empty-state.hidden {
+    display: none;
+  }
+
+  .empty-state .sub {
+    font-size: 14px;
+    color: var(--text-muted);
+    margin-top: 8px;
+  }
+
+  @media (max-width: 640px) {
+    .form-row-split {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

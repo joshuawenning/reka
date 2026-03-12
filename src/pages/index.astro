@@ -1,17 +1,402 @@
 ---
-
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Timer from '../components/Timer.astro';
+import EntryList from '../components/EntryList.astro';
+import Settings from '../components/Settings.astro';
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout>
+  <Header />
+  
+  <main>
+    <Timer />
+    <EntryList />
+  </main>
+  
+  <Settings />
+</Layout>
+
+<script>
+  import { 
+    getEntries, 
+    getPreferences, 
+    addEntry, 
+    deleteEntry, 
+    updatePreferences,
+    getProjects,
+    formatDuration,
+    formatTime,
+    formatDate
+  } from '../scripts/store.js';
+
+  let runningEntry = null;
+  let timerInterval = null;
+  let startTime = null;
+
+  const elements = {
+    timerDisplay: document.getElementById('timer-time'),
+    timerDot: document.getElementById('timer-dot'),
+    timerBtn: document.getElementById('timer-btn'),
+    projectInput: document.getElementById('project-input'),
+    descriptionInput: document.getElementById('description-input'),
+    projectSuggestions: document.getElementById('project-suggestions'),
+    runningTimerDisplay: document.getElementById('running-timer-display'),
+    entriesList: document.getElementById('entries-list'),
+    emptyState: document.getElementById('empty-state'),
+    manualEntryToggle: document.getElementById('manual-entry-toggle'),
+    manualEntryForm: document.getElementById('manual-entry-form'),
+    manualProject: document.getElementById('manual-project'),
+    manualDescription: document.getElementById('manual-description'),
+    manualDate: document.getElementById('manual-date'),
+    manualStart: document.getElementById('manual-start'),
+    manualEnd: document.getElementById('manual-end'),
+    manualCancel: document.getElementById('manual-cancel'),
+    manualSubmit: document.getElementById('manual-submit'),
+    settingsBtn: document.getElementById('settings-btn'),
+    settingsOverlay: document.getElementById('settings-overlay'),
+    settingsPanel: document.getElementById('settings-panel'),
+    settingsClose: document.getElementById('settings-close'),
+    themeSelect: document.getElementById('theme-select'),
+    timeFormat: document.getElementById('time-format'),
+    timezoneSelect: document.getElementById('timezone-select'),
+    clearData: document.getElementById('clear-data')
+  };
+
+  function getPrefs() {
+    return getPreferences();
+  }
+
+  function updateTimerDisplay() {
+    if (!runningEntry || !startTime) return;
+    const elapsed = Date.now() - startTime;
+    elements.timerDisplay.textContent = formatDuration(elapsed);
+    elements.runningTimerDisplay.textContent = `Tracking: ${formatDuration(elapsed)}`;
+  }
+
+  function startTimer() {
+    const project = elements.projectInput.value.trim() || 'Untitled';
+    const description = elements.descriptionInput.value.trim();
+    
+    startTime = Date.now();
+    runningEntry = {
+      project,
+      description,
+      startTime,
+      endTime: null,
+      duration: null
+    };
+    
+    elements.projectInput.value = '';
+    elements.descriptionInput.value = '';
+    elements.projectSuggestions.classList.add('hidden');
+    
+    updateTimerUI();
+    updateTimerDisplay();
+    elements.runningTimerDisplay.classList.remove('hidden');
+    
+    timerInterval = setInterval(() => {
+      updateTimerDisplay();
+    }, 1000);
+  }
+
+  function stopTimer() {
+    if (!runningEntry || !startTime) return;
+    
+    const endTime = Date.now();
+    const duration = endTime - startTime;
+    
+    addEntry({
+      project: runningEntry.project,
+      description: runningEntry.description,
+      startTime,
+      endTime,
+      duration
+    });
+    
+    clearInterval(timerInterval);
+    timerInterval = null;
+    runningEntry = null;
+    startTime = null;
+    
+    elements.timerDisplay.textContent = '00:00';
+    elements.timerDot.classList.remove('active');
+    elements.timerBtn.classList.remove('stop');
+    elements.timerBtn.querySelector('.btn-text').textContent = 'Start';
+    elements.runningTimerDisplay.classList.add('hidden');
+    
+    renderEntries();
+  }
+
+  function updateTimerUI() {
+    if (runningEntry) {
+      elements.timerDot.classList.add('active');
+      elements.timerBtn.classList.add('stop');
+      elements.timerBtn.querySelector('.btn-text').textContent = 'Stop';
+    } else {
+      elements.timerDot.classList.remove('active');
+      elements.timerBtn.classList.remove('stop');
+      elements.timerBtn.querySelector('.btn-text').textContent = 'Start';
+    }
+  }
+
+  function renderEntries() {
+    const entries = getEntries();
+    const prefs = getPrefs();
+    
+    if (entries.length === 0) {
+      elements.entriesList.innerHTML = '';
+      elements.emptyState.classList.remove('hidden');
+      return;
+    }
+    
+    elements.emptyState.classList.add('hidden');
+    
+    const grouped = {};
+    entries.forEach(entry => {
+      const key = entry.project.toLowerCase();
+      if (!grouped[key]) {
+        grouped[key] = {
+          name: entry.project,
+          entries: [],
+          totalDuration: 0
+        };
+      }
+      grouped[key].entries.push(entry);
+      if (entry.duration) grouped[key].totalDuration += entry.duration;
+    });
+    
+    const sortedGroups = Object.values(grouped).sort((a, b) => {
+      return b.entries[0].startTime - a.entries[0].startTime;
+    });
+    
+    elements.entriesList.innerHTML = sortedGroups.map(group => `
+      <div class="project-group" data-project="${group.name.toLowerCase()}">
+        <div class="project-header">
+          <span class="project-name">${escapeHtml(group.name)}</span>
+          <span class="project-total">${formatDuration(group.totalDuration)}</span>
+        </div>
+        ${group.entries.map(entry => renderEntryCard(entry, prefs)).join('')}
+      </div>
+    `).join('');
+    
+    document.querySelectorAll('.entry-action-btn.delete').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const id = e.currentTarget.dataset.id;
+        if (confirm('Delete this entry?')) {
+          deleteEntry(id);
+          renderEntries();
+        }
+      });
+    });
+  }
+
+  function renderEntryCard(entry, prefs) {
+    const start = formatTime(entry.startTime, prefs.use24Hour);
+    const end = entry.endTime ? formatTime(entry.endTime, prefs.use24Hour) : 'Running';
+    const duration = entry.duration ? formatDuration(entry.duration) : '...';
+    const date = formatDate(entry.startTime);
+    
+    return `
+      <div class="entry-card">
+        <div class="entry-info">
+          <div class="entry-project">${escapeHtml(entry.project)}</div>
+          ${entry.description ? `<div class="entry-description">${escapeHtml(entry.description)}</div>` : ''}
+          <div class="entry-meta">
+            <span>${date}</span>
+            <span>${start} - ${end}</span>
+          </div>
+        </div>
+        <div class="entry-duration">${duration}</div>
+        <div class="entry-actions">
+          <button class="entry-action-btn delete" data-id="${entry.id}" aria-label="Delete">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function showProjectSuggestions() {
+    const value = elements.projectInput.value.trim().toLowerCase();
+    if (!value) {
+      elements.projectSuggestions.classList.add('hidden');
+      return;
+    }
+    
+    const projects = getProjects().filter(p => 
+      p.name.toLowerCase().includes(value)
+    ).slice(0, 5);
+    
+    if (projects.length === 0) {
+      elements.projectSuggestions.classList.add('hidden');
+      return;
+    }
+    
+    elements.projectSuggestions.innerHTML = projects.map(p => `
+      <div class="suggestion-item" data-name="${escapeHtml(p.name)}">${escapeHtml(p.name)}</div>
+    `).join('');
+    
+    elements.projectSuggestions.classList.remove('hidden');
+    
+    elements.projectSuggestions.querySelectorAll('.suggestion-item').forEach(item => {
+      item.addEventListener('click', () => {
+        elements.projectInput.value = item.dataset.name;
+        elements.projectSuggestions.classList.add('hidden');
+      });
+    });
+  }
+
+  function openSettings() {
+    const prefs = getPreferences();
+    elements.themeSelect.value = prefs.theme;
+    elements.timeFormat.value = prefs.use24Hour ? '24' : '12';
+    populateTimezones();
+    elements.timezoneSelect.value = prefs.timezone;
+    
+    elements.settingsOverlay.classList.remove('hidden');
+    elements.settingsPanel.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeSettings() {
+    elements.settingsOverlay.classList.add('hidden');
+    elements.settingsPanel.classList.add('hidden');
+    document.body.style.overflow = '';
+  }
+
+  function populateTimezones() {
+    const timezones = [
+      'America/New_York',
+      'America/Chicago',
+      'America/Denver',
+      'America/Los_Angeles',
+      'America/Anchorage',
+      'Pacific/Honolulu',
+      'Europe/London',
+      'Europe/Paris',
+      'Europe/Berlin',
+      'Asia/Tokyo',
+      'Asia/Shanghai',
+      'Asia/Singapore',
+      'Australia/Sydney',
+      'local'
+    ];
+    
+    elements.timezoneSelect.innerHTML = timezones.map(tz => {
+      const label = tz === 'local' ? 'Local' : tz.replace(/_/g, ' ');
+      return `<option value="${tz}">${label}</option>`;
+    }).join('');
+  }
+
+  function handleManualEntry() {
+    const project = elements.manualProject.value.trim();
+    if (!project) {
+      elements.manualProject.focus();
+      return;
+    }
+    
+    const date = elements.manualDate.value;
+    const start = elements.manualStart.value;
+    const end = elements.manualEnd.value;
+    
+    if (!date || !start || !end) return;
+    
+    const startTime = new Date(`${date}T${start}`).getTime();
+    const endTime = new Date(`${date}T${end}`).getTime();
+    
+    if (endTime <= startTime) {
+      alert('End time must be after start time');
+      return;
+    }
+    
+    addEntry({
+      project,
+      description: elements.manualDescription.value.trim(),
+      startTime,
+      endTime,
+      duration: endTime - startTime
+    });
+    
+    elements.manualProject.value = '';
+    elements.manualDescription.value = '';
+    elements.manualDate.value = '';
+    elements.manualStart.value = '';
+    elements.manualEnd.value = '';
+    elements.manualEntryForm.classList.add('hidden');
+    renderEntries();
+  }
+
+  elements.timerBtn.addEventListener('click', () => {
+    if (runningEntry) {
+      stopTimer();
+    } else {
+      startTimer();
+    }
+  });
+
+  elements.projectInput.addEventListener('input', showProjectSuggestions);
+  elements.projectInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !runningEntry) {
+      startTimer();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!elements.projectInput.contains(e.target) && 
+        !elements.projectSuggestions.contains(e.target)) {
+      elements.projectSuggestions.classList.add('hidden');
+    }
+  });
+
+  elements.manualEntryToggle.addEventListener('click', () => {
+    elements.manualEntryForm.classList.toggle('hidden');
+    if (!elements.manualEntryForm.classList.contains('hidden')) {
+      elements.manualProject.focus();
+      const today = new Date().toISOString().split('T')[0];
+      elements.manualDate.value = today;
+    }
+  });
+
+  elements.manualCancel.addEventListener('click', () => {
+    elements.manualEntryForm.classList.add('hidden');
+  });
+
+  elements.manualSubmit.addEventListener('click', handleManualEntry);
+
+  elements.settingsBtn.addEventListener('click', openSettings);
+  elements.settingsClose.addEventListener('click', closeSettings);
+  elements.settingsOverlay.addEventListener('click', closeSettings);
+
+  elements.themeSelect.addEventListener('change', (e) => {
+    updatePreferences({ theme: e.target.value });
+  });
+
+  elements.timeFormat.addEventListener('change', (e) => {
+    updatePreferences({ use24Hour: e.target.value === '24' });
+    renderEntries();
+  });
+
+  elements.timezoneSelect.addEventListener('change', (e) => {
+    updatePreferences({ timezone: e.target.value });
+    renderEntries();
+  });
+
+  elements.clearData.addEventListener('click', () => {
+    if (confirm('Are you sure you want to delete all data? This cannot be undone.')) {
+      localStorage.removeItem('reka-data');
+      location.reload();
+    }
+  });
+
+  renderEntries();
+</script>

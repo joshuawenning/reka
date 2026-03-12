@@ -1,0 +1,149 @@
+---
+---
+
+<div class="timer-section">
+  <div class="timer-display" id="timer-display">
+    <span class="timer-dot" id="timer-dot"></span>
+    <span id="timer-time">00:00</span>
+  </div>
+  
+  <div class="timer-form">
+    <div class="input-group">
+      <input 
+        type="text" 
+        id="project-input" 
+        placeholder="Project name..." 
+        autocomplete="off"
+      />
+      <div id="project-suggestions" class="suggestions hidden"></div>
+    </div>
+    <input 
+      type="text" 
+      id="description-input" 
+      placeholder="What are you working on?"
+      autocomplete="off"
+    />
+    <button id="timer-btn" class="timer-btn">
+      <span class="btn-text">Start</span>
+    </button>
+  </div>
+</div>
+
+<style>
+  .timer-section {
+    padding: 32px 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .timer-display {
+    font-family: var(--font-mono);
+    font-size: 48px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 640px) {
+    .timer-display {
+      font-size: 36px;
+    }
+  }
+
+  .timer-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    transition: background 0.15s ease-out;
+  }
+
+  .timer-dot.active {
+    background: var(--accent);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .timer-form {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .input-group {
+    position: relative;
+  }
+
+  .timer-form input {
+    width: 100%;
+  }
+
+  .timer-form input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-top: 4px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    box-shadow: var(--shadow);
+  }
+
+  .suggestions.hidden {
+    display: none;
+  }
+
+  .suggestion-item {
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: background 0.1s ease-out;
+  }
+
+  .suggestion-item:hover {
+    background: var(--bg);
+  }
+
+  .timer-btn {
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    background: var(--accent);
+    color: white;
+    transition: all 0.15s ease-out;
+  }
+
+  .timer-btn:hover {
+    background: var(--accent-hover);
+  }
+
+  .timer-btn.stop {
+    background: transparent;
+    border: 2px solid var(--accent);
+    color: var(--accent);
+  }
+
+  .timer-btn.stop:hover {
+    background: var(--accent);
+    color: white;
+  }
+</style>

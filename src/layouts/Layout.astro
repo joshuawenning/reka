@@ -1,0 +1,32 @@
+---
+import '../styles/global.css';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Reka - Minimal time tracking for freelance creatives" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Reka</title>
+    <script is:inline>
+      const stored = localStorage.getItem('reka-data');
+      if (stored) {
+        try {
+          const data = JSON.parse(stored);
+          const theme = data.preferences?.theme || 'system';
+          if (theme === 'system') {
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+          } else {
+            document.documentElement.setAttribute('data-theme', theme);
+          }
+        } catch (e) {}
+      }
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
