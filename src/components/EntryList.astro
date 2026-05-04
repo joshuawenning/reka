@@ -35,15 +35,15 @@
 
 <style>
   .entries-section {
-    max-width: 720px;
     margin: 0 auto;
+    max-width: 720px;
     padding: 0 24px 48px;
   }
 
   .entries-header {
+    align-items: center;
     display: flex;
     justify-content: space-between;
-    align-items: center;
     margin-bottom: 24px;
   }
 
@@ -54,10 +54,10 @@
   }
 
   .text-btn {
+    border-radius: 6px;
     color: var(--accent);
     font-weight: 500;
     padding: 8px 12px;
-    border-radius: 6px;
     transition: background 0.15s ease-out;
   }
 
@@ -69,11 +69,11 @@
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: 8px;
-    padding: 20px;
-    margin-bottom: 24px;
     display: flex;
     flex-direction: column;
     gap: 12px;
+    margin-bottom: 24px;
+    padding: 20px;
   }
 
   .manual-entry-form.hidden {
@@ -86,8 +86,8 @@
 
   .form-row-split {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
     gap: 12px;
+    grid-template-columns: 1fr 1fr 1fr;
   }
 
   .form-actions {
@@ -98,10 +98,10 @@
   }
 
   .btn-secondary {
-    padding: 10px 20px;
     border-radius: 6px;
-    font-weight: 500;
     color: var(--text-secondary);
+    font-weight: 500;
+    padding: 10px 20px;
     transition: all 0.15s ease-out;
   }
 
@@ -111,11 +111,11 @@
   }
 
   .btn-primary {
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: 500;
     background: var(--accent);
+    border-radius: 6px;
     color: white;
+    font-weight: 500;
+    padding: 10px 20px;
     transition: all 0.15s ease-out;
   }
 
@@ -133,44 +133,44 @@
   }
 
   :global(.project-header) {
-    display: grid;
-    grid-template-columns: 1fr 120px 100px 80px;
-    gap: 16px;
-    padding: 12px 16px;
     border-bottom: 1px solid var(--border);
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr 120px 100px 80px;
     margin-bottom: 0;
+    padding: 12px 16px;
   }
 
   :global(.project-name-header) {
-    font-weight: 700;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     color: var(--text-primary);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
 
   :global(.project-total) {
+    color: var(--text-secondary);
     font-family: var(--font-mono);
     font-size: 14px;
-    color: var(--text-secondary);
     text-align: right;
   }
 
   :global(.project-total-label) {
-    font-weight: 600;
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     color: var(--text-muted);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
 
   :global(.entry-row) {
-    display: grid;
-    grid-template-columns: 1fr 120px 100px 80px;
-    gap: 16px;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
     align-items: center;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    gap: 16px;
+    grid-template-columns: 1fr 120px 100px 80px;
+    padding: 14px 16px;
     transition: background 0.1s ease-out;
   }
 
@@ -189,9 +189,9 @@
   :global(.entry-description) {
     color: var(--text-primary);
     font-size: 14px;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   :global(.entry-description.empty) {
@@ -200,34 +200,34 @@
   }
 
   :global(.entry-meta) {
-    font-size: 13px;
     color: var(--text-muted);
+    font-size: 13px;
   }
 
   :global(.entry-duration) {
-    font-family: var(--font-mono);
-    font-weight: 500;
-    font-size: 14px;
     color: var(--accent);
+    font-family: var(--font-mono);
+    font-size: 14px;
+    font-weight: 500;
     text-align: right;
   }
 
   :global(.entry-actions) {
     display: flex;
-    justify-content: flex-end;
     gap: 4px;
+    justify-content: flex-end;
   }
 
   :global(.entry-action-btn) {
-    width: 28px;
-    height: 28px;
-    display: flex;
     align-items: center;
-    justify-content: center;
     border-radius: 4px;
     color: var(--text-muted);
+    display: flex;
+    height: 28px;
+    justify-content: center;
     opacity: 0;
     transition: all 0.15s ease-out;
+    width: 28px;
   }
 
   :global(.entry-row:hover .entry-action-btn) {
@@ -244,13 +244,13 @@
   }
 
   :global(.entry-edit-form) {
-    display: grid;
-    gap: 12px 16px;
-    padding: 16px;
+    align-items: start;
     background: var(--surface);
     border-bottom: 1px solid var(--border);
-    align-items: start;
+    display: grid;
+    gap: 12px 16px;
     grid-column: 1 / -1;
+    padding: 16px;
   }
 
   :global(.edit-field-full) {
@@ -264,15 +264,15 @@
   }
 
   :global(.edit-field-label) {
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
     color: var(--text-muted);
+    font-size: 11px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
   }
 
   :global(.edit-input) {
-    padding: 8px 10px;
     font-size: 13px;
+    padding: 8px 10px;
     width: 100%;
   }
 
@@ -286,18 +286,18 @@
   }
 
   :global(.edit-actions) {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
     align-items: flex-end;
+    display: flex;
+    gap: 8px;
     grid-column: 3 / -1;
+    justify-content: flex-end;
   }
 
   :global(.edit-btn) {
-    padding: 8px 16px;
-    font-size: 13px;
     border-radius: 6px;
+    font-size: 13px;
     font-weight: 500;
+    padding: 8px 16px;
   }
 
   :global(.edit-btn.save) {
@@ -310,9 +310,9 @@
   }
 
   .empty-state {
-    text-align: center;
-    padding: 48px 24px;
     color: var(--text-secondary);
+    padding: 48px 24px;
+    text-align: center;
   }
 
   .empty-state.hidden {
@@ -320,27 +320,27 @@
   }
 
   .empty-state .sub {
-    font-size: 14px;
     color: var(--text-muted);
+    font-size: 14px;
     margin-top: 8px;
   }
 
   @media (max-width: 640px) {
-    :global(.project-header) {
-      display: none;
-    }
-
-    :global(.entry-row) {
-      grid-template-columns: 1fr auto;
-      gap: 8px;
-    }
-
     :global(.entry-meta), :global(.entry-duration) {
       display: none;
     }
 
+    :global(.entry-row) {
+      gap: 8px;
+      grid-template-columns: 1fr auto;
+    }
+
     :global(.entry-row:hover .entry-action-btn) {
       opacity: 1;
+    }
+
+    :global(.project-header) {
+      display: none;
     }
 
     .form-row-split {

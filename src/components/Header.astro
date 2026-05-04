@@ -18,48 +18,48 @@
 
 <style>
   .header {
-    height: 64px;
+    background: var(--bg);
     border-bottom: 1px solid var(--border);
+    height: 64px;
     position: sticky;
     top: 0;
-    background: var(--bg);
-    z-index: 100;
     transition: background 0.15s ease-out, border-color 0.15s ease-out;
+    z-index: 100;
   }
 
   .header-content {
-    max-width: 720px;
-    margin: 0 auto;
-    padding: 0 24px;
-    height: 100%;
-    display: flex;
     align-items: center;
+    display: flex;
+    height: 100%;
     justify-content: space-between;
+    margin: 0 auto;
+    max-width: 720px;
+    padding: 0 24px;
   }
 
   .logo {
+    color: var(--text-primary);
     font-size: 24px;
     font-weight: 700;
     letter-spacing: -0.02em;
-    color: var(--text-primary);
     text-decoration: none;
   }
 
   .header-actions {
-    display: flex;
     align-items: center;
+    display: flex;
     gap: 8px;
   }
 
   .icon-btn {
-    width: 40px;
-    height: 40px;
-    display: flex;
     align-items: center;
-    justify-content: center;
     border-radius: 8px;
     color: var(--text-secondary);
+    display: flex;
+    height: 40px;
+    justify-content: center;
     transition: all 0.15s ease-out;
+    width: 40px;
   }
 
   .icon-btn:hover {
@@ -68,12 +68,12 @@
   }
 
   .running-timer {
-    text-align: center;
-    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--accent);
     font-family: var(--font-mono);
     font-size: 14px;
-    color: var(--accent);
-    border-bottom: 1px solid var(--border);
+    padding: 8px 0;
+    text-align: center;
   }
 
   .running-timer.hidden {
